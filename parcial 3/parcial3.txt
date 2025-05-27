@@ -1,57 +1,137 @@
--- Elimina las tablas si ya existen
-DROP TABLE IF EXISTS SampleData;
-DROP TABLE IF EXISTS Employees;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
 
--- Crear tabla SampleData
-CREATE TABLE SampleData (
-  IntegerValue INTEGER PRIMARY KEY
-);
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 77166284
+Server version: 8.0.40 Source distribution
 
--- Insertar datos en SampleData
-INSERT INTO SampleData (IntegerValue) VALUES 
-(3759), (3760), (3761), (3762), (3763);
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
 
--- Obtener el segundo número entero más alto (forma 1)
-SELECT 'Segundo número más alto (LIMIT OFFSET)' AS Metodo;
-SELECT IntegerValue 
-FROM SampleData 
-ORDER BY IntegerValue DESC 
-LIMIT 1 OFFSET 1;
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
 
--- Obtener el segundo número más alto (forma 2)
-SELECT 'Segundo número más alto (MAX con subconsulta)' AS Metodo;
-SELECT MAX(IntegerValue)
-FROM SampleData
-WHERE IntegerValue < (
-  SELECT MAX(IntegerValue) FROM SampleData
-);
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
--- Crear tabla Employees
-CREATE TABLE Employees (
-  Name VARCHAR(100),
-  Salary INT
-);
+mysql> -- Elimina las tablas si ya existen
+mysql> DROP TABLE IF EXISTS SampleData;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
 
--- Insertar datos en Employees
-INSERT INTO Employees (Name, Salary) VALUES
-('Ayumi Arenas', 250000),
-('Saul Hernandez', 250000),
-('Alan Luna', 150000),
-('Victor Sanchez', 150000),
-('Jose Solis', 100000),
-('Keysha Garcia', 100000);
+mysql> DROP TABLE IF EXISTS Employees;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
 
--- Obtener el segundo salario más alto (forma 1)
-SELECT 'Segundo salario más alto (LIMIT OFFSET)' AS Metodo;
-SELECT DISTINCT Salary
-FROM Employees
-ORDER BY Salary DESC
-LIMIT 1 OFFSET 1;
+mysql> 
+mysql> -- Crear tabla SampleData
+mysql> CREATE TABLE SampleData (
+    ->   IntegerValue INTEGER PRIMARY KEY
+    -> );
+Query OK, 0 rows affected (0.03 sec)
 
--- Obtener el segundo salario más alto (forma 2)
-SELECT 'Segundo salario más alto (MAX con subconsulta)' AS Metodo;
-SELECT MAX(Salary)
-FROM Employees
-WHERE Salary < (
-  SELECT MAX(Salary) FROM Employees
-);
+mysql> 
+mysql> -- Insertar datos en SampleData
+mysql> INSERT INTO SampleData (IntegerValue) VALUES 
+    -> (3759), (3760), (3761), (3762), (3763);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> -- Obtener el segundo número entero más alto (forma 1)
+mysql> SELECT 'Segundo número más alto (LIMIT OFFSET)' AS Metodo;
++------------------------------------------+
+| Metodo                                   |
++------------------------------------------+
+| Segundo número más alto (LIMIT OFFSET)   |
++------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT IntegerValue 
+    -> FROM SampleData 
+    -> ORDER BY IntegerValue DESC 
+    -> LIMIT 1 OFFSET 1;
++--------------+
+| IntegerValue |
++--------------+
+|         3762 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> -- Obtener el segundo número más alto (forma 2)
+mysql> SELECT 'Segundo número más alto (MAX con subconsulta)' AS Metodo;
++-------------------------------------------------+
+| Metodo                                          |
++-------------------------------------------------+
+| Segundo número más alto (MAX con subconsulta)   |
++-------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MAX(IntegerValue)
+    -> FROM SampleData
+    -> WHERE IntegerValue < (
+    ->   SELECT MAX(IntegerValue) FROM SampleData
+    -> );
++-------------------+
+| MAX(IntegerValue) |
++-------------------+
+|              3762 |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> -- Crear tabla Employees
+mysql> CREATE TABLE Employees (
+    ->   Name VARCHAR(100),
+    ->   Salary INT
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> 
+mysql> -- Insertar datos en Employees
+mysql> INSERT INTO Employees (Name, Salary) VALUES
+    -> ('Ayumi Arenas', 250000),
+    -> ('Saul Hernandez', 250000),
+    -> ('Alan Luna', 150000),
+    -> ('Victor Sanchez', 150000),
+    -> ('Jose Solis', 100000),
+    -> ('Keysha Garcia', 100000);
+Query OK, 6 rows affected (0.01 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+mysql> 
+mysql> -- Obtener el segundo salario más alto (forma 1)
+mysql> SELECT 'Segundo salario más alto (LIMIT OFFSET)' AS Metodo;
++------------------------------------------+
+| Metodo                                   |
++------------------------------------------+
+| Segundo salario más alto (LIMIT OFFSET)  |
++------------------------------------------+
+1 row in set (0.00 sec)
+mysql> SELECT DISTINCT Salary
+    -> FROM Employees
+    -> ORDER BY Salary DESC
+    -> LIMIT 1 OFFSET 1;
++--------+
+| Salary |
++--------+
+| 150000 |
++--------+
+1 row in set (0.00 sec)
+mysql> 
+mysql> -- Obtener el segundo salario más alto (forma 2)
+mysql> SELECT 'Segundo salario más alto (MAX con subconsulta)' AS Metodo;
++-------------------------------------------------+
+| Metodo                                          |
++-------------------------------------------------+
+| Segundo salario más alto (MAX con subconsulta)  |
++-------------------------------------------------+
+1 row in set (0.00 sec)
+mysql> SELECT MAX(Salary)
+    -> FROM Employees
+    -> WHERE Salary < (
+    ->   SELECT MAX(Salary) FROM Employees
+    -> );
++-------------+
+| MAX(Salary) |
++-------------+
+|      150000 |
++-------------+
+1 row in set (0.00 sec)
