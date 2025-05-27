@@ -1,0 +1,57 @@
+-- Elimina las tablas si ya existen
+DROP TABLE IF EXISTS SampleData;
+DROP TABLE IF EXISTS Employees;
+
+-- Crear tabla SampleData
+CREATE TABLE SampleData (
+  IntegerValue INTEGER PRIMARY KEY
+);
+
+-- Insertar datos en SampleData
+INSERT INTO SampleData (IntegerValue) VALUES 
+(3759), (3760), (3761), (3762), (3763);
+
+-- Obtener el segundo número entero más alto (forma 1)
+SELECT 'Segundo número más alto (LIMIT OFFSET)' AS Metodo;
+SELECT IntegerValue 
+FROM SampleData 
+ORDER BY IntegerValue DESC 
+LIMIT 1 OFFSET 1;
+
+-- Obtener el segundo número más alto (forma 2)
+SELECT 'Segundo número más alto (MAX con subconsulta)' AS Metodo;
+SELECT MAX(IntegerValue)
+FROM SampleData
+WHERE IntegerValue < (
+  SELECT MAX(IntegerValue) FROM SampleData
+);
+
+-- Crear tabla Employees
+CREATE TABLE Employees (
+  Name VARCHAR(100),
+  Salary INT
+);
+
+-- Insertar datos en Employees
+INSERT INTO Employees (Name, Salary) VALUES
+('Ayumi Arenas', 250000),
+('Saul Hernandez', 250000),
+('Alan Luna', 150000),
+('Victor Sanchez', 150000),
+('Jose Solis', 100000),
+('Keysha Garcia', 100000);
+
+-- Obtener el segundo salario más alto (forma 1)
+SELECT 'Segundo salario más alto (LIMIT OFFSET)' AS Metodo;
+SELECT DISTINCT Salary
+FROM Employees
+ORDER BY Salary DESC
+LIMIT 1 OFFSET 1;
+
+-- Obtener el segundo salario más alto (forma 2)
+SELECT 'Segundo salario más alto (MAX con subconsulta)' AS Metodo;
+SELECT MAX(Salary)
+FROM Employees
+WHERE Salary < (
+  SELECT MAX(Salary) FROM Employees
+);
