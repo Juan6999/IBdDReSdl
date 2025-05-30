@@ -1,0 +1,104 @@
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 85892774
+Server version: 8.0.40 Source distribution
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> -- =====================================
+mysql> -- PASO 1: Eliminar las tablas si ya existen
+mysql> -- =====================================
+mysql> DROP TABLE IF EXISTS Ordenes;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DROP TABLE IF EXISTS TiemposManufactura;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> 
+mysql> -- =====================================
+mysql> -- PASO 2: Crear tabla Ordenes
+mysql> -- Contiene el Id, el nombre del producto, y los días disponibles para entregarlo
+mysql> -- =====================================
+mysql> CREATE TABLE Ordenes (
+    ->   Id INT PRIMARY KEY,
+    ->   Producto VARCHAR(50),
+    ->   DiasParaEntregar INT
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> 
+mysql> -- =====================================
+mysql> -- PASO 3: Insertar datos en Ordenes
+mysql> -- =====================================
+mysql> INSERT INTO Ordenes (Id, Producto, DiasParaEntregar) VALUES
+    -> (1, 'Amancer', 7),
+    -> (2, 'Atardecer', 3),
+    -> (3, 'Anochecer', 9);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> -- =====================================
+mysql> -- PASO 4: Crear tabla TiemposManufactura
+mysql> -- Contiene cada componente de un producto y cuántos días tarda en producirse
+mysql> -- =====================================
+mysql> CREATE TABLE TiemposManufactura (
+    ->   Producto VARCHAR(50),
+    ->   Componente VARCHAR(50),
+    ->   DiasManufactura INT
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+mysql> 
+mysql> -- =====================================
+mysql> -- PASO 5: Insertar datos de componentes y días de manufactura
+mysql> -- =====================================
+mysql> INSERT INTO TiemposManufactura (Producto, Componente, DiasManufactura) VALUES
+    -> ('Amancer', 'Photon Coil', 7),
+    -> ('Amancer', 'Filamento', 2),
+    -> ('Amancer', 'Capacitor', 3),
+    -> ('Amancer', 'Esfera', 1),
+    -> ('Atardecer', 'Photon Coil', 7),
+    -> ('Atardecer', 'Filamento', 2),
+    -> ('Anochecer', 'Capacitor', 3),
+    -> ('Anochecer', 'Photon Coil', 1);
+Query OK, 8 rows affected (0.00 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+mysql> 
+mysql> -- =====================================
+mysql> -- PASO 6: Consulta final
+mysql> -- Objetivo: Calcular para cada producto:
+mysql> -- - Cuánto tarda en armarse (el componente más lento)
+mysql> -- - Compararlo con los días disponibles
+mysql> -- - Determinar si se entregará en tiempo, adelantado o atrasado
+mysql> -- =====================================
+mysql> 
+mysql> SELECT 
+    ->   o.Id,                                 -- ID de la orden
+    ->   o.Producto,                           -- Nombre del producto
+    ->   MAX(tm.DiasManufactura) AS DiasParaArmar, -- Días para armar (el más lento de sus componentes)
+    ->   o.DiasParaEntregar,                   -- Días disponibles para entregar
+    ->   CASE
+    ->     WHEN MAX(tm.DiasManufactura) = o.DiasParaEntregar THEN 'En tiempo'
+    ->     WHEN MAX(tm.DiasManufactura) < o.DiasParaEntregar THEN 'Adelantado'
+    ->     ELSE 'Atrasado'
+    ->   END AS Calendario                     -- Resultado según comparación
+    -> FROM Ordenes o
+    -> JOIN TiemposManufactura tm
+    ->   ON o.Producto = tm.Producto           -- Relacionamos por nombre del producto
+    -> GROUP BY o.Id, o.Producto, o.DiasParaEntregar;
++----+-----------+---------------+------------------+------------+
+| Id | Producto  | DiasParaArmar | DiasParaEntregar | Calendario |
++----+-----------+---------------+------------------+------------+
+|  1 | Amancer   |             7 |                7 | En tiempo  |
+|  2 | Atardecer |             7 |                3 | Atrasado   |
+|  3 | Anochecer |             3 |                9 | Adelantado |
++----+-----------+---------------+------------------+------------+
+3 rows in set (0.00 sec)
